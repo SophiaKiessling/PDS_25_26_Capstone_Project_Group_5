@@ -32,14 +32,14 @@ Purpose: Implementation of programmatic labeling to automatically generate pseud
 Purpose: Implementation of a simple and interpretable supervised baseline using TF-IDF features and Logistic Regression
 
 ### 07_Hybrid_Model_and_Pseudolabeling.ipynb
-Purpose:  
+Purpose: Implementation of Pseudolabeling (ensemble with TF-IDF + LogReg, Rule-Based, Fine-Tuning), Feature Engineering and Random Forest training, Hybrid prediction with TF-IDF + LogReg and Random Forest
 Model: hybrid_model  
 Related file: linkedin_pseudo_labeled_ensemble.json
 
 ### 07_Hybrid_Model_and_Pseudolabeling_Variante_B.ipynb
-Purpose:  
+Purpose: variant of the hybrid prediction model with AI generated pseudolabels for "professional"
 Model: hybrid_model_Variante_B  
-Related file:linkedin_pseudo_labeled_ensemble_professional.json
+Related file: linkedin_pseudo_labeled_ensemble_professional.json
 
 ## Given Datasets
 
