@@ -19,7 +19,7 @@ Purpose: Implementation of the Rule-based matching (baseline)
 Purpose: Implementation of Embedding-based Labeling with MiniLM-L12 and DistilUSE
 
 ### 03_Fine_tuned_classification_model.ipynb
-Purpose: Implementation of Fine-tuned classification models (xlm-roberta-base and distilbert-base-multilingual-cased)\\
+Purpose: Implementation of Fine-tuned classification models (xlm-roberta-base and distilbert-base-multilingual-cased)  
 Models: the models are available here: 
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_dept_model
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_sen_model\\
