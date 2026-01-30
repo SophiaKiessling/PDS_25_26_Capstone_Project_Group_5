@@ -37,7 +37,7 @@ Model: hybrid_model
 Related file: linkedin_pseudo_labeled_ensemble.json
 
 ### 07_Hybrid_Model_and_Pseudolabeling_Variante_B.ipynb
-Purpose: variant of the hybrid prediction model with AI generated pseudolabels for "professional"
+Purpose: variant of the hybrid prediction model with AI generated pseudolabels for "professional"  
 Model: hybrid_model_Variante_B  
 Related file: linkedin_pseudo_labeled_ensemble_professional.json
 
