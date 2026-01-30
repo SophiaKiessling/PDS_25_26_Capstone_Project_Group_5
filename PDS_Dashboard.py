@@ -6,13 +6,15 @@ import json                    # Einlesen von JSON-Dateien (LinkedIn CV Daten)
 import re                      # Regex (z.B. für Text-Normalisierung und Abkürzungen zählen)
 from pathlib import Path       # Plattform-unabhängige Pfade / File-Handling
 from collections import Counter  # Häufigkeiten zählen (Top Tokens)
+from hybrid_model_Variante_B.hybrid_predictor import HybridPredictor
+   
 
 import numpy as np             # Numerische Operationen (z.B. NaN checks, Arrays)
 import pandas as pd            # DataFrames für strukturierte Daten
 import streamlit as st         # Streamlit Framework für Dashboard/Frontend
 import matplotlib.pyplot as plt  # Visualisierung (Histogramme, Barplots)
 
-import joblib                  # ✅ NEU: Modelle laden/speichern (Pipeline .joblib)
+import joblib                 
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 # CountVectorizer: Häufigkeiten von Tokens/N-Grams zählen
@@ -359,27 +361,11 @@ def compute_seniority_increases(df_jobs: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(out)
 
 
-#  Baseline Model Loader (lädt deine gespeicherten joblib Modelle)
+#  HybridPredictor Loader
 @st.cache_resource(show_spinner=False)
-def load_baseline_models(model_dir: str, sen_name: str, dept_name: str):
-    """
-    Lädt die gespeicherten Baseline Modelle (TF-IDF + LogisticRegression) aus dem Notebook.
-    Erwartete Files:
-    - sen_baseline_tfidf_lr.joblib
-    - dept_baseline_tfidf_lr.joblib
-    """
-    sen_path = Path(model_dir) / sen_name
-    dept_path = Path(model_dir) / dept_name
+def load_hybrid_model():
+    return HybridPredictor(model_dir="hybrid_model_Variante_B")
 
-    if not sen_path.exists() or not dept_path.exists():
-        raise FileNotFoundError(
-            f"Model files not found:\n{sen_path}\n{dept_path}\n"
-            f"Make sure you saved them from the notebook."
-        )
-
-    sen_model = joblib.load(sen_path)
-    dept_model = joblib.load(dept_path)
-    return sen_model, dept_model
 
 
 # -----------------------------
@@ -396,16 +382,10 @@ with st.sidebar:
     unlabeled_path = st.text_input("Unlabeled JSON (optional)", value="linkedin-cvs-not-annotated.json")
 
     st.divider()
-    st.header("Model loading (Baseline)")
-    model_dir = st.text_input("Model directory", value="saved_models")
-    sen_model_file = st.text_input("Seniority model file", value="sen_baseline_tfidf_lr.joblib")
-    dept_model_file = st.text_input("Department model file", value="dept_baseline_tfidf_lr.joblib")
-
-    st.divider()
     st.header("Pages")
     page = st.radio(
         "Navigation",
-        ["Overview", "Labels", "Job Title NLP", "Career History", "Data Quality", "Prediction (Baseline)"],
+        ["Overview", "Labels", "Job Title NLP", "Career History", "Data Quality", "Prediction (Hybrid)"],
         index=0
     )
 
@@ -558,7 +538,8 @@ elif page == "Labels":
 # -----------------------------
 elif page == "Job Title NLP":
     st.markdown(
-        "This page provides a comprehensive exploration of job titles in the selected dataset, including basic statistics, frequent words and character sequences, TF–IDF keywords, bigrams, abbreviations, and the ability to search for specific terms." )   
+        " Select the dataset for which you want to explore various analyses of job titles."
+        " You can also add custom stopwords to ignore common or irrelevant terms, helping the analysis focus on more meaningful words." )   
     st.divider()
     st.subheader("Job Title NLP Exploration (ACTIVE jobs)")
 
@@ -882,90 +863,40 @@ elif page == "Data Quality":
 
 
 # -----------------------------
-# ✅ NEW Page: Prediction (Baseline)
+# Prediction 
 # -----------------------------
-elif page == "Prediction (Baseline)":
-    st.subheader("Prediction Demo (Baseline TF–IDF + Logistic Regression)")
-    st.caption("Uses the saved models from your Jupyter notebook (.joblib).")
+elif page == "Prediction (Hybrid)":
+    st.subheader("Prediction Demo (Hybrid Variante B)")
 
-    # Try loading the models
     try:
-        sen_model, dept_model = load_baseline_models(model_dir, sen_model_file, dept_model_file)
-        st.success("✅ Baseline models loaded successfully.")
+        predictor = load_hybrid_model()
+        st.success("✅ Hybrid model loaded.")
     except Exception as e:
-        st.error("❌ Could not load baseline models.")
+        st.error("❌ Failed to load hybrid model.")
         st.exception(e)
         st.stop()
 
-    st.markdown(
-        """
-Enter a job title below. The baseline models will predict:
-- **Seniority**
-- **Department**
-and also show a simple confidence score based on the maximum class probability.
-        """
-    )
+    job_title = st.text_input("Job title", "Senior Software Engineer")
 
-    title_input = st.text_input("Job title input", value="Senior Data Analyst")
+    if job_title.strip():
+        person_jobs = [{
+            "position": job_title,
+            "startDate": None,
+            "endDate": None,
+            "status": "ACTIVE"
+        }]
 
-    if title_input.strip():
-        title_norm = normalize_title(title_input)
+        result = predictor.predict(person_jobs, 0)
 
-        # Seniority prediction + confidence
-        sen_pred = sen_model.predict([title_norm])[0]
-        sen_proba = sen_model.predict_proba([title_norm])[0]
-        sen_conf = float(np.max(sen_proba))
+        st.subheader("Prediction Result")
 
-        # Department prediction + confidence
-        dept_pred = dept_model.predict([title_norm])[0]
-        dept_proba = dept_model.predict_proba([title_norm])[0]
-        dept_conf = float(np.max(dept_proba))
+        st.metric(
+            "Predicted Seniority",
+            f"{result['seniority']['label']} ({result['seniority']['confidence']:.2%})"
+        )
 
-        c1, c2 = st.columns(2)
-        with c1:
-            st.metric("Predicted Seniority", sen_pred)
-            st.progress(min(max(sen_conf, 0.0), 1.0))
-            st.caption(f"Confidence: {sen_conf:.3f}")
-
-        with c2:
-            st.metric("Predicted Department", dept_pred)
-            st.progress(min(max(dept_conf, 0.0), 1.0))
-            st.caption(f"Confidence: {dept_conf:.3f}")
-
-        st.divider()
-
-        # Show top-3 classes for more interpretability
-        st.markdown("### Top-3 predicted classes (probabilities)")
-
-        sen_classes = np.array(sen_model.classes_)
-        dept_classes = np.array(dept_model.classes_)
-
-        sen_top_idx = np.argsort(sen_proba)[-3:][::-1]
-        dept_top_idx = np.argsort(dept_proba)[-3:][::-1]
-
-        df_sen_top = pd.DataFrame({
-            "class": sen_classes[sen_top_idx],
-            "probability": sen_proba[sen_top_idx]
-        })
-
-        df_dept_top = pd.DataFrame({
-            "class": dept_classes[dept_top_idx],
-            "probability": dept_proba[dept_top_idx]
-        })
-
-        colA, colB = st.columns(2)
-        with colA:
-            st.write("Seniority")
-            st.dataframe(df_sen_top, use_container_width=True)
-
-        with colB:
-            st.write("Department")
-            st.dataframe(df_dept_top, use_container_width=True)
-
-        st.divider()
-        st.caption(f"Normalized input used for prediction: '{title_norm}'")
-
-
-
-
+        st.metric(
+            "Predicted Department",
+            f"{result['department']['label']} ({result['department']['confidence']:.2%})"
+        )
 
