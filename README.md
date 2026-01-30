@@ -19,10 +19,10 @@ Purpose: Implementation of the Rule-based matching (baseline)
 Purpose: Implementation of Embedding-based Labeling with MiniLM-L12 and DistilUSE
 
 ### 03_Fine_tuned_classification_model.ipynb
-Purpose: Implementation of Fine-tuned classification models (xlm-roberta-base and distilbert-base-multilingual-cased)
+Purpose: Implementation of Fine-tuned classification models (xlm-roberta-base and distilbert-base-multilingual-cased)\\
 Models: the models are available here: 
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_dept_model
-        https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_sen_model
+        https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_sen_model\\
 Related file: label_encoders.pkl
 
 ### 04_Programmatic_labeling_approach.ipynb
@@ -32,13 +32,13 @@ Purpose: Implementation of programmatic labeling to automatically generate pseud
 Purpose: Implementation of a simple and interpretable supervised baseline using TF-IDF features and Logistic Regression
 
 ### 07_Hybrid_Model_and_Pseudolabeling.ipynb
-Purpose:
-Model: hybrid_model
+Purpose:\\
+Model: hybrid_model\\
 Related file: linkedin_pseudo_labeled_ensemble.json
 
 ### 07_Hybrid_Model_and_Pseudolabeling_Variante_B.ipynb
-Purpose:
-Model: hybrid_model_Variante_B
+Purpose:\\
+Model: hybrid_model_Variante_B\\
 Related file:linkedin_pseudo_labeled_ensemble_professional.json
 
 ## Given Datasets
