@@ -23,7 +23,7 @@ Purpose: Implementation of Fine-tuned classification models (xlm-roberta-base an
 Models: the models are available here:   
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_dept_model
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_sen_model  
-Related file: label_encoders.pkl
+Related file: label_encoders.pkl  
 Note: Notebook was created and testet in Google Colab due to GPU requirements  
       Notebook outputs were cleared to avoid GitHub rendering issues related to Colab-specific metadata
 
