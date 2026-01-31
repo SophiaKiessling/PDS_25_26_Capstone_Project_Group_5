@@ -24,6 +24,8 @@ Models: the models are available here:
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_dept_model
         https://huggingface.co/SophiaKiessling/PDS_2025_Capstone_Project_Group5_best_sen_model  
 Related file: label_encoders.pkl
+Note: Notebook was created and testet in Google Colab due to GPU requirements
+      Notebook outputs were cleared to avoid GitHub rendering issues related to Colab-specific metadata
 
 ### 04_Programmatic_labeling_approach.ipynb
 Purpose: Implementation of programmatic labeling to automatically generate pseudo-labels
